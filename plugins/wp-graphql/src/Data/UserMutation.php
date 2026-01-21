@@ -203,8 +203,10 @@ class UserMutation {
 			$insert_user_args['user_pass'] = $input['password'];
 		} else {
 			// WP 6.9+ requires a password when creating users.
-			// Generate a random one if not provided - user can reset it later.
-			$insert_user_args['user_pass'] = wp_generate_password();
+			// Generate a random one for insert user if not provided - user can reset it later.
+			if ( 'updateUser' !== $mutation_name ) {
+				$insert_user_args['user_pass'] = wp_generate_password();
+			}
 		}
 
 		if ( ! empty( $input['username'] ) ) {
