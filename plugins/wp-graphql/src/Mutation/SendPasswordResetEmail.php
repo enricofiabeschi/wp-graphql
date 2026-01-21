@@ -97,6 +97,15 @@ class SendPasswordResetEmail {
 			$subject = self::get_email_subject( $user_data );
 			$message = self::get_email_message( $user_data, $key );
 
+			$send_pwd_reset_request_email = apply_filters( 'graphql_send_pwd_reset_request', true, $user_data, $key );
+
+			if ( ! $send_pwd_reset_request_email ) {
+				return [
+					'id'      => $user_data->ID,
+					'success' => true,
+				];
+			}
+
 			$email_sent = wp_mail( // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
 				$user_data->user_email,
 				wp_specialchars_decode( $subject ),
