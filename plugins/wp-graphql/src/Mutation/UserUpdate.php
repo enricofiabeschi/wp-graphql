@@ -89,7 +89,20 @@ class UserUpdate {
 
 			$user_args       = UserMutation::prepare_user_object( $input, 'updateUser' );
 			$user_args['ID'] = $user_id;
+			
+			/**
+			 * Fire password reset action before updating the user in case the password exists in the args
+			 */
+			$has_password_change = ! empty( $user_args['user_pass'] );
 
+			if ( wp_check_password( $user_args['user_pass'], $existing_user->user_pass, $existing_user->ID ) ) {
+        $has_password_change = false;
+    	}
+
+			if ( $has_password_change ) {
+				do_action( 'password_reset', $existing_user, $user_args['user_pass'] );
+			}
+			
 			/**
 			 * Update the user
 			 */
@@ -112,6 +125,16 @@ class UserUpdate {
 			 */
 			if ( empty( $updated_user_id ) ) {
 				throw new UserError( esc_html__( 'The user failed to update', 'wp-graphql' ) );
+			}
+
+			/**
+			 * Fire after password reset action after updating the user in case the password exists in the args
+			 */
+			if ( $has_password_change ) {
+				$updated_user = get_user_by( 'id', $updated_user_id );
+				if ( $updated_user instanceof \WP_User ) {
+					do_action( 'after_password_reset', $updated_user, $user_args['user_pass'] );
+				}
 			}
 
 			/**
