@@ -47,6 +47,7 @@ class Taxonomy extends Model {
 		$allowed_restricted_fields = [
 			'id',
 			'name',
+			'label',
 			'description',
 			'hierarchical',
 			'object_type',
@@ -97,7 +98,7 @@ class Taxonomy extends Model {
 					return ! empty( $this->name ) ? Relay::toGlobalId( 'taxonomy', $this->name ) : null;
 				},
 				'label'               => function () {
-					return ! empty( $this->data->label ) ? $this->data->label : null;
+					return ! empty( $this->data->labels->singular_name ) ? $this->data->labels->singular_name : null;
 				},
 				'name'                => function () {
 					return ! empty( $this->data->name ) ? $this->data->name : null;
