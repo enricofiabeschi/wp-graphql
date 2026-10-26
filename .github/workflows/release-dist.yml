@@ -48,10 +48,10 @@ jobs:
           tools: composer:v2
           coverage: none
 
-      - name: Setup Node.js (>=22 required)
+      - name: Setup Node.js (>=24 required)
         uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
 
       - name: Install PHP dependencies (dist)
         working-directory: plugins/wp-graphql
